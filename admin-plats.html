@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Plats - Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .admin-main {
+            margin-left: 250px;
+            flex: 1;
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+
+        .admin-nav {
+            padding: 2rem 0;
+        }
+
+        .admin-nav h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #e74c3c;
+        }
+
+        .admin-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .admin-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-nav a {
+            display: block;
+            padding: 1rem 2rem;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: #e74c3c;
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            right: 2rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .admin-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .admin-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .admin-table img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .add-plat-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <nav class="admin-nav">
+                <h2>Admin Panel</h2>
+                <ul>
+                    <li><a href="admin-dashboard.html">Dashboard</a></li>
+                    <li><a href="admin-plats.html" class="active">Gestion des Plats</a></li>
+                    <li><a href="admin-reservations.html">Réservations</a></li>
+                    <li><a href="admin-avis.html">Avis Clients</a></li>
+                </ul>
+                <button class="logout-btn" onclick="logout()">Déconnexion</button>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <h1>Gestion des Plats</h1>
+
+            <div class="add-plat-form">
+                <h2>Ajouter un nouveau plat</h2>
+                <form id="addPlatForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="platNom">Nom du plat</label>
+                            <input type="text" id="platNom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="platPrix">Prix (€)</label>
+                            <input type="number" id="platPrix" name="prix" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="platCategorie">Catégorie</label>
+                            <select id="platCategorie" name="categorie" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="entrees">Entrées</option>
+                                <option value="plats">Plats principaux</option>
+                                <option value="desserts">Desserts</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="platImage">URL de l'image</label>
+                            <input type="url" id="platImage" name="image">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="platDescription">Description</label>
+                        <textarea id="platDescription" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="platRecette">Recette</label>
+                        <textarea id="platRecette" name="recette" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Ajouter le plat</button>
+                </form>
+            </div>
+
+            <div class="admin-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Prix</th>
+                            <th>Catégorie</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="platsTableBody">
+                        <!-- Les plats seront chargés dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let restaurant;
+
+        function logout() {
+            localStorage.removeItem('userSession');
+            window.location.href = 'connexion.html';
+        }
+
+        function loadPlats() {
+            const tbody = $('#platsTableBody');
+            tbody.empty();
+
+            restaurant.plats.forEach(plat => {
+                const row = `
+                    <tr>
+                        <td><img src="${plat.image}" alt="${plat.nom}"></td>
+                        <td>${plat.nom}</td>
+                        <td>${plat.description.substring(0, 50)}...</td>
+                        <td>${plat.prix}€</td>
+                        <td>${plat.categorie}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-edit" onclick="editPlat(${plat.id})">Modifier</button>
+                                <button class="btn-delete" onclick="deletePlat(${plat.id})">Supprimer</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+
+        function editPlat(id) {
+            const plat = restaurant.plats.find(p => p.id === id);
+            if (plat) {
+                $('#platNom').val(plat.nom);
+                $('#platPrix').val(plat.prix);
+                $('#platCategorie').val(plat.categorie);
+                $('#platImage').val(plat.image);
+                $('#platDescription').val(plat.description);
+                $('#platRecette').val(plat.recette.replace(/<[^>]*>/g, ''));
+                
+                // Changer le bouton pour modification
+                $('#addPlatForm button[type="submit"]').text('Modifier le plat').data('editing', id);
+            }
+        }
+
+        function deletePlat(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce plat ?')) {
+                restaurant.plats = restaurant.plats.filter(p => p.id !== id);
+                loadPlats();
+                alert('Plat supprimé avec succès !');
+            }
+        }
+
+        $(document).ready(function() {
+            // Vérifier l'authentification admin
+            const userSession = localStorage.getItem('userSession');
+            if (!userSession) {
+                window.location.href = 'connexion.html';
+                return;
+            }
+
+            const session = JSON.parse(userSession);
+            if (session.type !== 'admin') {
+                alert('Accès non autorisé');
+                window.location.href = 'connexion.html';
+                return;
+            }
+
+            restaurant = new Restaurant();
+            loadPlats();
+
+            // Gestion du formulaire d'ajout/modification
+            $('#addPlatForm').submit(function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    nom: $('#platNom').val(),
+                    prix: parseFloat($('#platPrix').val()),
+                    categorie: $('#platCategorie').val(),
+                    image: $('#platImage').val() || "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 250'><rect fill='%23f0f0f0' width='300' height='250'/><text x='150' y='125' text-anchor='middle' font-size='16' fill='%23666'>Image</text></svg>",
+                    description: $('#platDescription').val(),
+                    recette: `<h3>${$('#platNom').val()}</h3><p>${$('#platRecette').val()}</p>`
+                };
+
+                const editingId = $('#addPlatForm button[type="submit"]').data('editing');
+                
+                if (editingId) {
+                    // Modification
+                    const platIndex = restaurant.plats.findIndex(p => p.id === editingId);
+                    if (platIndex !== -1) {
+                        restaurant.plats[platIndex] = { ...restaurant.plats[platIndex], ...formData };
+                        alert('Plat modifié avec succès !');
+                    }
+                    $('#addPlatForm button[type="submit"]').text('Ajouter le plat').removeData('editing');
+                } else {
+                    // Ajout
+                    const newPlat = {
+                        id: Math.max(...restaurant.plats.map(p => p.id)) + 1,
+                        ...formData
+                    };
+                    restaurant.plats.push(newPlat);
+                    alert('Plat ajouté avec succès !');
+                }
+
+                $('#addPlatForm')[0].reset();
+                loadPlats();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avis Clients - Restaurant Le Gourmet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">Le Gourmet</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="plats.html">Nos Plats</a></li>
+                    <li><a href="avis.html" class="active">Avis</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="connexion.html">Connexion</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Avis de nos Clients</h1>
+            
+            <div class="stats-section" id="statsSection">
+                <!-- Les statistiques seront chargées dynamiquement -->
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-rating="all">Tous les avis</button>
+                <button class="filter-btn" data-rating="5">5 étoiles</button>
+                <button class="filter-btn" data-rating="4">4 étoiles</button>
+                <button class="filter-btn" data-rating="3">3 étoiles</button>
+                <button class="filter-btn" data-rating="2">2 étoiles</button>
+                <button class="filter-btn" data-rating="1">1 étoile</button>
+            </div>
+
+            <div class="reviews-section">
+                <div class="reviews-list" id="reviewsList">
+                    <!-- Les avis seront chargés dynamiquement -->
+                </div>
+
+                <div class="add-review-form">
+                    <h3 class="form-title">Laissez votre avis</h3>
+                    <form id="reviewForm">
+                        <div class="form-group">
+                            <label for="reviewerName">Votre nom</label>
+                            <input type="text" id="reviewerName" name="reviewerName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Votre note</label>
+                            <div class="rating-input" id="ratingInput">
+                                <span class="rating-star" data-rating="1">★</span>
+                                <span class="rating-star" data-rating="2">★</span>
+                                <span class="rating-star" data-rating="3">★</span>
+                                <span class="rating-star" data-rating="4">★</span>
+                                <span class="rating-star" data-rating="5">★</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reviewText">Votre commentaire</label>
+                            <textarea id="reviewText" name="reviewText" placeholder="Partagez votre expérience..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn">Publier l'avis</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

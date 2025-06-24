@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Plats - Restaurant Le Gourmet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">Le Gourmet</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="plats.html" class="active">Nos Plats</a></li>
+                    <li><a href="avis.html">Avis</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="connexion.html">Connexion</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Nos Délicieux Plats</h1>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-category="tous">Tous</button>
+                <button class="filter-btn" data-category="entrees">Entrées</button>
+                <button class="filter-btn" data-category="plats">Plats Principaux</button>
+                <button class="filter-btn" data-category="desserts">Desserts</button>
+            </div>
+
+            <div class="plats-grid" id="platsGrid">
+                <!-- Les plats seront chargés dynamiquement -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal pour les recettes -->
+    <div id="recipeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="recipeContent" class="recipe-content">
+                <!-- Le contenu de la recette sera chargé ici -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

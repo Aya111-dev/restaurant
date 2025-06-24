@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Réservations - Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .admin-main {
+            margin-left: 250px;
+            flex: 1;
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+
+        .admin-nav {
+            padding: 2rem 0;
+        }
+
+        .admin-nav h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #e74c3c;
+        }
+
+        .admin-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .admin-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-nav a {
+            display: block;
+            padding: 1rem 2rem;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: #e74c3c;
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            right: 2rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .reservations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .reservation-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #e74c3c;
+        }
+
+        .reservation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .reservation-id {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .reservation-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .reservation-details {
+            margin-bottom: 1rem;
+        }
+
+        .reservation-details p {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .reservation-details strong {
+            color: #2c3e50;
+        }
+
+        .reservation-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-confirm {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-cancel {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-confirm:hover {
+            background: #229954;
+        }
+
+        .btn-cancel:hover {
+            background: #c0392b;
+        }
+
+        .add-reservation-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <nav class="admin-nav">
+                <h2>Admin Panel</h2>
+                <ul>
+                    <li><a href="admin-dashboard.html">Dashboard</a></li>
+                    <li><a href="admin-plats.html">Gestion des Plats</a></li>
+                    <li><a href="admin-reservations.html" class="active">Réservations</a></li>
+                    <li><a href="admin-avis.html">Avis Clients</a></li>
+                </ul>
+                <button class="logout-btn" onclick="logout()">Déconnexion</button>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <h1>Gestion des Réservations</h1>
+
+            <div class="add-reservation-form">
+                <h2>Ajouter une nouvelle réservation</h2>
+                <form id="addReservationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientNom">Nom du client</label>
+                            <input type="text" id="clientNom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientEmail">Email</label>
+                            <input type="email" id="clientEmail" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientTelephone">Téléphone</label>
+                            <input type="tel" id="clientTelephone" name="telephone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombrePersonnes">Nombre de personnes</label>
+                            <select id="nombrePersonnes" name="personnes" required>
+                                <option value="">Sélectionner</option>
+                                <option value="1">1 personne</option>
+                                <option value="2">2 personnes</option>
+                                <option value="3">3 personnes</option>
+                                <option value="4">4 personnes</option>
+                                <option value="5">5 personnes</option>
+                                <option value="6">6 personnes</option>
+                                <option value="7">7 personnes</option>
+                                <option value="8">8 personnes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dateReservation">Date</label>
+                            <input type="date" id="dateReservation" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="heureReservation">Heure</label>
+                            <select id="heureReservation" name="heure" required>
+                                <option value="">Sélectionner l'heure</option>
+                                <option value="12:00">12:00</option>
+                                <option value="12:30">12:30</option>
+                                <option value="13:00">13:00</option>
+                                <option value="13:30">13:30</option>
+                                <option value="14:00">14:00</option>
+                                <option value="19:00">19:00</option>
+                                <option value="19:30">19:30</option>
+                                <option value="20:00">20:00</option>
+                                <option value="20:30">20:30</option>
+                                <option value="21:00">21:00</option>
+                                <option value="21:30">21:30</option>
+                                <option value="22:00">22:00</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="commentaires">Commentaires</label>
+                        <textarea id="commentaires" name="commentaires" placeholder="Demandes spéciales, allergies, etc."></textarea>
+                    </div>
+                    <button type="submit" class="btn">Ajouter la réservation</button>
+                </form>
+            </div>
+
+            <div class="reservations-grid" id="reservationsGrid">
+                <!-- Les réservations seront chargées dynamiquement -->
+            </div>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let reservations = [
+            {
+                id: 1,
+                nom: "Marie Dubois",
+                email: "marie.dubois@email.com",
+                telephone: "01 23 45 67 89",
+                personnes: 4,
+                date: "2024-12-20",
+                heure: "19:30",
+                status: "confirmed",
+                commentaires: "Table près de la fenêtre si possible"
+            },
+            {
+                id: 2,
+                nom: "Pierre Martin",
+                email: "pierre.martin@email.com",
+                telephone: "01 98 76 54 32",
+                personnes: 2,
+                date: "2024-12-21",
+                heure: "20:00",
+                status: "pending",
+                commentaires: "Anniversaire de mariage"
+            },
+            {
+                id: 3,
+                nom: "Sophie Laurent",
+                email: "sophie.laurent@email.com",
+                telephone: "01 11 22 33 44",
+                personnes: 6,
+                date: "2024-12-22",
+                heure: "12:30",
+                status: "confirmed",
+                commentaires: "Repas d'affaires"
+            }
+        ];
+
+        function logout() {
+            localStorage.removeItem('userSession');
+            window.location.href = 'connexion.html';
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'confirmed': return 'status-confirmed';
+                case 'pending': return 'status-pending';
+                case 'cancelled': return 'status-cancelled';
+                default: return 'status-pending';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'confirmed': return 'Confirmée';
+                case 'pending': return 'En attente';
+                case 'cancelled': return 'Annulée';
+                default: return 'En attente';
+            }
+        }
+
+        function loadReservations() {
+            const container = $('#reservationsGrid');
+            container.empty();
+
+            reservations.forEach(reservation => {
+                const card = `
+                    <div class="reservation-card">
+                        <div class="reservation-header">
+                            <div class="reservation-id">Réservation #${reservation.id}</div>
+                            <div class="reservation-status ${getStatusClass(reservation.status)}">
+                                ${getStatusText(reservation.status)}
+                            </div>
+                        </div>
+                        <div class="reservation-details">
+                            <p><strong>Client:</strong> ${reservation.nom}</p>
+                            <p><strong>Email:</strong> ${reservation.email}</p>
+                            <p><strong>Téléphone:</strong> ${reservation.telephone}</p>
+                            <p><strong>Date:</strong> ${new Date(reservation.date).toLocaleDateString('fr-FR')}</p>
+                            <p><strong>Heure:</strong> ${reservation.heure}</p>
+                            <p><strong>Personnes:</strong> ${reservation.personnes}</p>
+                            ${reservation.commentaires ? `<p><strong>Commentaires:</strong> ${reservation.commentaires}</p>` : ''}
+                        </div>
+                        <div class="reservation-actions">
+                            ${reservation.status !== 'confirmed' ? `<button class="btn-confirm" onclick="confirmReservation(${reservation.id})">Confirmer</button>` : ''}
+                            ${reservation.status !== 'cancelled' ? `<button class="btn-cancel" onclick="cancelReservation(${reservation.id})">Annuler</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                container.append(card);
+            });
+        }
+
+        function confirmReservation(id) {
+            const reservation = reservations.find(r => r.id === id);
+            if (reservation) {
+                reservation.status = 'confirmed';
+                loadReservations();
+                alert('Réservation confirmée !');
+            }
+        }
+
+        function cancelReservation(id) {
+            if (confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+                const reservation = reservations.find(r => r.id === id);
+                if (reservation) {
+                    reservation.status = 'cancelled';
+                    loadReservations();
+                    alert('Réservation annulée !');
+                }
+            }
+        }
+
+        $(document).ready(function() {
+            // Vérifier l'authentification admin
+            const userSession = localStorage.getItem('userSession');
+            if (!userSession) {
+                window.location.href = 'connexion.html';
+                return;
+            }
+
+            const session = JSON.parse(userSession);
+            if (session.type !== 'admin') {
+                alert('Accès non autorisé');
+                window.location.href = 'connexion.html';
+                return;
+            }
+
+            loadReservations();
+
+            // Définir la date minimum à aujourd'hui
+            const today = new Date().toISOString().split('T')[0];
+            $('#dateReservation').attr('min', today);
+
+            // Gestion du formulaire d'ajout de réservation
+            $('#addReservationForm').submit(function(e) {
+                e.preventDefault();
+                
+                const newReservation = {
+                    id: Math.max(...reservations.map(r => r.id)) + 1,
+                    nom: $('#clientNom').val(),
+                    email: $('#clientEmail').val(),
+                    telephone: $('#clientTelephone').val(),
+                    personnes: parseInt($('#nombrePersonnes').val()),
+                    date: $('#dateReservation').val(),
+                    heure: $('#heureReservation').val(),
+                    status: 'pending',
+                    commentaires: $('#commentaires').val()
+                };
+
+                reservations.push(newReservation);
+                loadReservations();
+                $('#addReservationForm')[0].reset();
+                alert('Réservation ajoutée avec succès !');
+            });
+        });
+    </script>
+</body>
+</html>

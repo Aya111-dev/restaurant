@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Restaurant Le Gourmet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">Le Gourmet</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="plats.html">Nos Plats</a></li>
+                    <li><a href="avis.html">Avis</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                    <li><a href="connexion.html">Connexion</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Contactez-nous</h1>
+            
+            <div class="contact-content">
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h2>Nos Coordonnées</h2>
+                        <div class="info-item">
+                            <h3>Adresse</h3>
+                            <p>123 Avenue de la Gastronomie<br>75001 Paris, France</p>
+                        </div>
+                        <div class="info-item">
+                            <h3>Heures d'ouverture</h3>
+                            <p>Lundi - Vendredi: 12h - 14h30, 19h - 22h30<br>
+                            Samedi - Dimanche: 12h - 23h</p>
+                        </div>
+                        <div class="info-item">
+                            <h3>Contact</h3>
+                            <p>Téléphone: +33 1 23 45 67 89<br>
+                            Email: contact@legourmet.fr</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form-container">
+                        <h2>Envoyez-nous un message</h2>
+                        <form id="contactForm" class="contact-form">
+                            <div class="form-group">
+                                <label for="contact-name">Votre nom</label>
+                                <input type="text" id="contact-name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-email">Votre email</label>
+                                <input type="email" id="contact-email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-subject">Sujet</label>
+                                <input type="text" id="contact-subject" name="subject" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-message">Message</label>
+                                <textarea id="contact-message" name="message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn submit-btn">Envoyer le message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Restaurant Le Gourmet. Tous droits réservés.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#contactForm').submit(function(e) {
+                e.preventDefault();
+                
+                // Simuler l'envoi du message
+                const submitBtn = $('.submit-btn');
+                const originalText = submitBtn.text();
+                submitBtn.text('Envoi en cours...').prop('disabled', true);
+                
+                setTimeout(function() {
+                    alert('Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.');
+                    $('#contactForm')[0].reset();
+                    submitBtn.text(originalText).prop('disabled', false);
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>

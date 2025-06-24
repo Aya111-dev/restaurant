@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Le Gourmet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">Le Gourmet</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="active">Accueil</a></li>
+                    <li><a href="plats.html">Nos Plats</a></li>
+                    <li><a href="avis.html">Avis</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="connexion.html">Connexion</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Bienvenue au Restaurant Le Gourmet</h1>
+                <p>Découvrez une cuisine française authentique dans un cadre élégant</p>
+                <a href="plats.html" class="btn">Découvrir notre menu</a>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Nos Spécialités</h2>
+            <div class="menu-preview" id="menuPreview">
+                <!-- Les plats seront chargés dynamiquement -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Restaurant Le Gourmet. Tous droits réservés.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Classe principale Restaurant
+        class Restaurant {
+            constructor() {
+                this.plats = [];
+                this.loadData();
+            }
+
+            loadData() {
+                // Simulation de données JSON pour les plats
+                this.plats = [
+                    {
+                        id: 1,
+                        nom: "Salade César",
+                        description: "Salade fraîche avec croûtons et parmesan",
+                        prix: 12.90,
+                        image: "IMG1.jpg",
+                        categorie: "entrees"
+                    },
+                    {
+                        id: 2,
+                        nom: "Coq au Vin",
+                        description: "Plat traditionnel français au vin rouge",
+                        prix: 25.90,
+                        image: "img2.jpg",
+                        categorie: "plats"
+                    },
+                    {
+                        id: 3,
+                        nom: "Tarte Tatin",
+                        description: "Tarte aux pommes caramélisées",
+                        prix: 8.50,
+                        image: "img3.webp",
+                        categorie: "desserts"
+                    }
+                ];
+            }
+        }
+
+        function toggleMobileMenu() {
+            const navMenu = $('.nav-menu');
+            navMenu.toggle();
+        }
+
+        // Initialisation
+        $(document).ready(function() {
+            const restaurant = new Restaurant();
+            const plats = restaurant.plats.slice(0, 3);
+
+            const container = $('#menuPreview');
+            container.empty();
+
+            plats.forEach(plat => {
+                const platElement = $(`
+                    <div class="menu-item">
+                        <img src="${plat.image}" alt="${plat.nom}">
+                        <div class="menu-item-content">
+                            <h3>${plat.nom}</h3>
+                            <p>${plat.description}</p>
+                            <div class="price">${plat.prix}€</div>
+                        </div>
+                    </div>
+                `);
+                container.append(platElement);
+            });
+        });
+    </script>
+</body>
+</html>

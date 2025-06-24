@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Avis - Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .admin-logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .admin-logo h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .admin-nav ul {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .admin-nav li {
+            margin: 5px 0;
+        }
+
+        .admin-nav a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: rgba(255,255,255,0.1);
+            border-right: 3px solid #fff;
+        }
+
+        .admin-nav .icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .admin-main {
+            flex: 1;
+            margin-left: 250px;
+            padding: 0;
+        }
+
+        .admin-header {
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h1 {
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .admin-filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .admin-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e1e5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .reviews-admin-list {
+            padding: 25px;
+        }
+
+        .review-admin-item {
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .review-admin-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .review-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-user-info strong {
+            color: #333;
+        }
+
+        .review-rating {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 1.1rem;
+        }
+
+        .review-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .review-content {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .review-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .review-response {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .response-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e1e5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: #333;
+            margin: 0;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .original-review {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+            }
+
+            .admin-main {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .review-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="admin-nav">
+                <ul>
+                    <li><a href="admin-dashboard.html"><i class="icon">📊</i> Dashboard</a></li>
+                    <li><a href="admin-plats.html"><i class="icon">🍽️</i> Gestion Plats</a></li>
+                    <li><a href="admin-reservations.html"><i class="icon">📅</i> Réservations</a></li>
+                    <li><a href="admin-avis.html" class="active"><i class="icon">⭐</i> Gestion Avis</a></li>
+                    <li><a href="index.html"><i class="icon">🏠</i> Retour Site</a></li>
+                    <li><a href="connexion.html" id="logoutBtn"><i class="icon">🚪</i> Déconnexion</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Gestion des Avis Clients</h1>
+                <div class="admin-user-info">
+                    <span>Administrateur</span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Statistiques des avis -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <h3 id="totalReviews">0</h3>
+                            <p>Total Avis</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-info">
+                            <h3 id="averageRating">0</h3>
+                            <p>Note Moyenne</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3 id="approvedReviews">0</h3>
+                            <p>Avis Approuvés</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info">
+                            <h3 id="pendingReviews">0</h3>
+                            <p>En Attente</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtres -->
+                <div class="admin-filters">
+                    <div class="filter-group">
+                        <label for="statusFilter">Statut :</label>
+                        <select id="statusFilter">
+                            <option value="all">Tous les avis</option>
+                            <option value="approved">Approuvés</option>
+                            <option value="pending">En attente</option>
+                            <option value="rejected">Rejetés</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="ratingFilter">Note :</label>
+                        <select id="ratingFilter">
+                            <option value="all">Toutes les notes</option>
+                            <option value="5">5 étoiles</option>
+                            <option value="4">4 étoiles</option>
+                            <option value="3">3 étoiles</option>
+                            <option value="2">2 étoiles</option>
+                            <option value="1">1 étoile</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <input type="text" id="searchReviews" placeholder="Rechercher dans les avis...">
+                    </div>
+                </div>
+
+                <!-- Liste des avis -->
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Liste des Avis</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" id="exportReviews">
+                                📊 Exporter
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="reviews-admin-list" id="reviewsAdminList">
+                        <!-- Les avis seront chargés dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal pour répondre aux avis -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Répondre à l'avis</h3>
+                <span class="close" id="closeModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="original-review" id="originalReview">
+                    <!-- L'avis original sera affiché ici -->
+                </div>
+                <form id="responseForm">
+                    <div class="form-group">
+                        <label for="responseText">Votre réponse :</label>
+                        <textarea id="responseText" name="responseText" rows="4" placeholder="Rédigez votre réponse..." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelResponse">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Envoyer la réponse</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Données simulées des avis
+        let reviewsData = [
+            {
+                id: 1,
+                nom: "Marie Dubois",
+                email: "marie@email.com",
+                rating: 5,
+                commentaire: "Excellent restaurant ! La cuisine est délicieuse et le service impeccable. Je recommande vivement !",
+                date: "2024-01-15",
+                status: "approved",
+                response: null
+            },
+            {
+                id: 2,
+                nom: "Pierre Martin",
+                email: "pierre@email.com",
+                rating: 4,
+                commentaire: "Très bon repas, ambiance agréable. Seul bémol : l'attente un peu longue.",
+                date: "2024-01-14",
+                status: "approved",
+                response: "Merci pour votre retour ! Nous travaillons à améliorer nos temps de service."
+            },
+            {
+                id: 3,
+                nom: "Sophie Laurent",
+                email: "sophie@email.com",
+                rating: 3,
+                commentaire: "Correct sans plus. Les plats manquent un peu de saveur à mon goût.",
+                date: "2024-01-13",
+                status: "pending",
+                response: null
+            },
+            {
+                id: 4,
+                nom: "Jean Dupont",
+                email: "jean@email.com",
+                rating: 5,
+                commentaire: "Fantastique ! Meilleur restaurant de la ville. Tout était parfait.",
+                date: "2024-01-12",
+                status: "approved",
+                response: "Merci beaucoup pour ce merveilleux commentaire !"
+            },
+            {
+                id: 5,
+                nom: "Anonyme",
+                email: "test@test.com",
+                rating: 1,
+                commentaire: "Service décevant, nourriture froide. Je ne reviendrai pas.",
+                date: "2024-01-11",
+                status: "pending",
+                response: null
+            }
+        ];
+
+        let currentReviewId = null;
+
+        // Classe pour gérer les avis admin
+        class AdminReviewManager {
+            constructor() {
+                this.reviews = reviewsData;
+                this.filteredReviews = [...this.reviews];
+                this.init();
+            }
+
+            init() {
+                this.updateStats();
+                this.displayReviews();
+                this.bindEvents();
+            }
+
+            updateStats() {
+                const total = this.reviews.length;
+                const approved = this.reviews.filter(r => r.status === 'approved').length;
+                const pending = this.reviews.filter(r => r.status === 'pending').length;
+                const avgRating = total > 0 ? (this.reviews.reduce((sum, r) => sum + r.rating, 0) / total).toFixed(1) : 0;
+
+                document.getElementById('totalReviews').textContent = total;
+                document.getElementById('approvedReviews').textContent = approved;
+                document.getElementById('pendingReviews').textContent = pending;
+                document.getElementById('averageRating').textContent = avgRating;
+            }
+
+            displayReviews() {
+                const container = document.getElementById('reviewsAdminList');
+                
+                if (this.filteredReviews.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Aucun avis trouvé.</p>';
+                    return;
+                }
+
+                container.innerHTML = this.filteredReviews.map(review => `
+                    <div class="review-admin-item">
+                        <div class="review-header">
+                            <div class="review-user-info">
+                                <strong>${review.nom}</strong>
+                                <span class="review-rating">
+                                    ${this.generateStars(review.rating)}
+                                </span>
+                            </div>
+                            <span class="review-status status-${review.status}">
+                                ${this.getStatusText(review.status)}
+                            </span>
+                        </div>
+                        <div class="review-content">${review.commentaire}</div>
+                        <div class="review-date">Publié le ${this.formatDate(review.date)}</div>
+                        
+                        ${review.response ? `
+                            <div class="review-response">
+                                <div class="response-header">Réponse du restaurant :</div>
+                                <div>${review.response}</div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="review-actions">
+                            ${review.status === 'pending' ? `
+                                <button class="btn btn-success btn-sm" onclick="adminReviewManager.approveReview(${review.id})">
+                                    ✅ Approuver
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="adminReviewManager.rejectReview(${review.id})">
+                                    ❌ Rejeter
+                                </button>
+                            ` : ''}
+                            
+                            ${review.status === 'approved' ? `
+                                <button class="btn btn-primary btn-sm" onclick="adminReviewManager.openResponseModal(${review.id})">
+                                    💬 ${review.response ? 'Modifier réponse' : 'Répondre'}
+                                </button>
+                            ` : ''}
+                            
+                            <button class="btn btn-danger btn-sm" onclick="adminReviewManager.deleteReview(${review.id})">
+                                🗑️ Supprimer
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            generateStars(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    stars += `<span class="star">${i <= rating ? '★' : '☆'}</span>`;
+                }
+                return stars;
+            }
+
+            getStatusText(status) {
+                const statusTexts = {
+                    'approved': 'Approuvé',
+                    'pending': 'En attente',
+                    'rejected': 'Rejeté'
+                };
+                return statusTexts[status] || status;
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('fr-FR');
+            }
+
+            approveReview(id) {
+                const review = this.reviews.find(r => r.id === id);
+                if (review) {
+                    review.status = 'approved';
+                    this.updateStats();
+                    this.applyFilters();
+                    this.showNotification('Avis approuvé avec succès !', 'success');
+                }
+            }
+
+            rejectReview(id) {
+                const review = this.reviews.find(r => r.id === id);
+                if (review) {
+                    review.status = 'rejected';
+                    this.updateStats();
+                    this.applyFilters();
+                    this.showNotification('Avis rejeté.', 'warning');
+                }
+            }
+
+            deleteReview(id) {
+                if (confirm('Êtes-vous sûr de vouloir supprimer cet avis définitivement ?')) {
+                    this.reviews = this.reviews.filter(r => r.id !== id);
+                    this.updateStats();
+                    this.applyFilters();
+                    this.showNotification('Avis supprimé.', 'danger');
+                }
+            }
+
+            openResponseModal(id) {
+                currentReviewId = id;
+                const review = this.reviews.find(r => r.id === id);
+                if (review) {
+                    document.getElementById('originalReview').innerHTML = `
+                        <strong>${review.nom}</strong> - ${this.generateStars(review.rating)}
+                        <br><br>
+                        "${review.commentaire}"
+                    `;
+                    document.getElementById('responseText').value = review.response || '';
+                    document.getElementById('responseModal').style.display = 'block';
+                }
+            }
+
+            closeResponseModal() {
+                document.getElementById('responseModal').style.display = 'none';
+                currentReviewId = null;
+                document.getElementById('responseForm').reset();
+            }
+
+            submitResponse(responseText) {
+                if (currentReviewId) {
+                    const review = this.reviews.find(r => r.id === currentReviewId);
+                    if (review) {
+                        review.response = responseText;
+                        this.displayReviews();
+                        this.closeResponseModal();
+                        this.showNotification('Réponse enregistrée !', 'success');
+                    }
+                }
+            }
+
+            applyFilters() {
+                const statusFilter = document.getElementById('statusFilter').value;
+                const ratingFilter = document.getElementById('ratingFilter').value;
+                const searchTerm = document.getElementById('searchReviews').value.toLowerCase();
+
+                this.filteredReviews = this.reviews.filter(review => {
+                    const matchesStatus = statusFilter === 'all' || review.status === statusFilter;
+                    const matchesRating = ratingFilter === 'all' || review.rating.toString() === ratingFilter;
+                    const matchesSearch = searchTerm === '' || 
+                        review.nom.toLowerCase().includes(searchTerm) ||
+                        review.commentaire.toLowerCase().includes(searchTerm);
+
+                    return matchesStatus && matchesRating && matchesSearch;
+                });
+
+                this.displayReviews();
+            }
+
+            exportReviews() {
+                const csvContent = "data:text/csv;charset=utf-8," 
+                    + "Nom,Email,Note,Commentaire,Date,Statut,Réponse\n"
+                    + this.reviews.map(r => 
+                        `"${r.nom}","${r.email}",${r.rating},"${r.commentaire}","${r.date}","${r.status}","${r.response || ''}"`
+                    ).join("\n");
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "avis_restaurant.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            bindEvents() {
+                // Filtres
+                document.getElementById('statusFilter').addEventListener('change', () => this.applyFilters());
+                document.getElementById('ratingFilter').addEventListener('change', () => this.applyFilters());
+                document.getElementById('searchReviews').addEventListener('input', () => this.applyFilters());
+
+                // Export
+                document.getElementById('exportReviews').addEventListener('click', () => this.exportReviews());
+
+                // Modal
+                document.getElementById('closeModal').addEventListener('click', () => this.closeResponseModal());
+                document.getElementById('cancelResponse').addEventListener('click', () => this.closeResponseModal());
+                
+                document.getElementById('responseForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const responseText = document.getElementById('responseText').value.trim();
+                    if (responseText) {
+                        this.submitResponse(responseText);
+                    }
+                });
+
+                // Fermer modal en cliquant à l'extérieur
+                window.addEventListener('click', (e) => {
+                    if (e.target === document.getElementById('responseModal')) {
+                        this.closeResponseModal();
+                    }
+                });
+            }
+
+            showNotification(message, type = 'info') {
+                // Créer une notification simple
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    background: ${type === 'success' ? '#28a745' : type === 'danger' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#17a2b8'};
+                    color: ${type === 'warning' ? '#212529' : 'white'};
+                    border-radius: 5px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                    z-index: 10000;
+                    font-weight: 600;
+                `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 3000);
+            }
+        }
+
+        // Fonction pour vérifier l'authentification admin
+        function isAdminAuthenticated() {
+            const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            return user.type === 'admin';
+        }
+
+        // Initialisation
+        let adminReviewManager;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier l'authentification admin
+            if (!isAdminAuthenticated()) {
+                alert('Accès non autorisé. Redirection vers la page de connexion.');
+                window.location.href = 'connexion.html';
+                return;
+            }
+
+            // Initialiser le gestionnaire d'avis admin
+            adminReviewManager = new AdminReviewManager();
+        });
+    </script>
+</body>
+</html>
